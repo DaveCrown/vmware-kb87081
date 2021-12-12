@@ -16,7 +16,8 @@
       with_items: "{{ vcenter_version_output.stdout.split(' ') }}"
       when: item is regex("\A[6,7].*")
 
-    - name: run fixes
+    - name: run fixes for 6.7
       include_role:
         name: "{{role}}"
-      with_items: 
+      with_items: "{{ fixes-6.5 }}"
+      when: vcenter_version is regex("6\.7")

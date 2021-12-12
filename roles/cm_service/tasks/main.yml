@@ -1,0 +1,22 @@
+---
+
+- name: get cm_service strate
+  command: grep -i jndilookup /usr/lib/vmware-cm/lib/log4j-core.jar | wc -l
+  register: cm_output
+
+- name: set check_varible
+  set_fact:
+    cm_service_vulnerable: "{{ cm_output.result.stdout | int }}"
+
+- name: check for backup
+  stat:
+    path: /usr/lib/vmware-cm/lib/log4j-core.jar.bak
+  register: cm_backup_stat
+  changed_when: false
+
+- name: backup origional jar
+  copy:
+    remote_src: /usr/lib/vmware-cm/lib/log4j-core.jar
+    dest: /usr/lib/vmware-cm/lib/log4j-core.jar.bak
+  when:
+    - cm_service_status !=0
