@@ -1,0 +1,22 @@
+---
+- name: Apply CVE-2021-21972  Workaround
+  hosts: "{{ env | default('all') }}"
+  gather_facts: no
+  become: no
+  strategy: debug
+
+  tasks:
+    - name: get vcenter vcenter version string
+      command: vpxd -v
+      register: vcenter_version_output
+
+    - name: set version
+      debug:
+        vcenter_version: "{{ item }}"
+      with_items: "{{ vcenter_version_output.stdout.split(' ') }}"
+      when: item is regex("\A[6,7].*")
+
+    - name: run fixes
+      include_role:
+        name: "{{role}}"
+      with_items: 

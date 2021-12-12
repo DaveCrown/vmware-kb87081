@@ -1,0 +1,10 @@
+---
+ansible_ssh_user: root
+
+fixes-6.5:
+  - vmon-6.5
+  - cm_service
+
+fixes-6.7:
+  - vmon-6.5
+  - cm_service

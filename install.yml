@@ -1,0 +1,52 @@
+- hosts: "{{ install_host | default('all')}}"
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  vars:
+    pkgs:
+      - bash-completion
+      - ansible
+      - powershell
+      - git
+      - yum-utils
+      - python-requests
+      - python36-pyvmomi
+
+    yum_online_repo_files:
+      - 'ms-pwsh.repo'
+
+    yum_repo_keys:
+      - 'microsoft.asc'
+
+  tasks:
+    - name: Install yum repositories
+      copy:
+        src: '{{ item }}'
+        dest: '/etc/yum.repos.d/{{ item }}'
+      with_items: "{{ yum_online_repo_files }}"
+      when: configure_repos | default( True )
+
+    - name: Install yum repo keys
+      copy:
+        src: '{{ item }}'
+        dest: '/etc/pki/rpm-gpg/{{ item }}'
+      with_items: "{{ yum_repo_keys }}"
+
+    - name: Install Packages
+      yum:
+        name: "{{ pkgs }}"
+        state: latest
+        update_cache: yes
+
+    - name: update all the things
+      yum: 
+        name: ' * '
+        state: latest
+        update_cache: yes
+
+    - name: install PowerCLI
+      shell:
+        executable: /usr/bin/pwsh
+        cmd: "if (-not (Get-InstalledModule vmware.powercli -ErrorAction silentlycontinue)){ Install-Module vmware.powercli -Confirm:$False -Force }"
+      become: no
