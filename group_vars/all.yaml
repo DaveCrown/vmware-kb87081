@@ -7,14 +7,14 @@ fixes_65:
 
 fixes_67:
   - cm_service
-  - vmon_65
   - analytics
+  - vmon_65
 
 fixes_70:
   - dbcc
   - analytics
-  - vmon_65
   - vum
+  - vmon_65
 
 fixes_70u2:
   - dbcc
