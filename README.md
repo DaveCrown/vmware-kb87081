@@ -1,6 +1,6 @@
-# vmware-kb87081 Workaround for VMSA-2021-0028 CVE-2021-44228
+# vmware-kb87081: Workaround for VMSA-2021-0028 CVE-2021-44228
 ## Description
-A play that runs through the various fixes as outlined in VMware KB87081 to workaround the apache log4j RCE[Reference Section](#Reference) 
+A play that runs through the various fixes as outlined in VMware KB87081 to workaround the apache log4j RCE [Reference Section](#Reference) 
 ### The Play's workflow 
 1. SSH's in to the VC and sets the vrops plugin to incompatible. 
 2. Gets the version of vcenter via vpxd -v
@@ -16,7 +16,8 @@ A play that runs through the various fixes as outlined in VMware KB87081 to work
  
 The logic behind erroring out when the fix is needed and the backup file for the jar or wrapper exists is the file is not in a known good state and I didn't want to overwrite a known good backup. 
 > ### ***<span style="color:red">Warning!</span>***
->- Mucking config files can break your environment. Have backups and snapshots before begin.
+>- This is just to hold you over until patches are available. 
+>- Mucking around in config files can break your environment. Have backups and snapshots before begin.
 >- You're running code downloaded from the Internet, read the code first to get that warm and fuzzy feeling. 
 >- I'm suggesting you generate and copy ssh keys to your vc. Understand the risks and mitigation before you do this.
 >- Beyond this point, there be dragons. Proceed at your own risk.
@@ -29,8 +30,8 @@ The logic behind erroring out when the fix is needed and the backup file for the
 - Ansible (developed against 2.9)
 - vCenter 6.5 VCSA or later (developed against 6.7u3p and 7.0u2)
 - git
-- a text editor of your choice
-- the `root` os passwords for all the vcsa's you want to run this against
+- A text editor of your choice
+- The `root` os passwords for all the vcsa's you want to run this against
 ### To use the Vagrant file
 - Vagrant
 - One of following Virtualization Technologies:
@@ -103,7 +104,7 @@ Just a simple `ansible-playbook -k apply_kb.yml` is all you need. The flag `-k` 
 Call `ansible-playbook apply_kb.yml` without the `-k`.
 
 ### Validating the change
-Since this is barest of bones play. Please validate the play with the steps outlined [vmware kb 87081](https://kb.vmware.com/s/article/87081).
+After applying each fix, the play will validate that the workaround has been applied to each service as described in [vmware kb 87081](https://kb.vmware.com/s/article/87081).
 
 ### Options
 #### CLI 
