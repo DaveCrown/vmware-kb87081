@@ -9,15 +9,43 @@
     - name: get vcenter vcenter version string
       command: vpxd -v
       register: vcenter_version_output
+      changed_when: false
 
     - name: set version
-      debug:
+      set_fact:
         vcenter_version: "{{ item }}"
       with_items: "{{ vcenter_version_output.stdout.split(' ') }}"
       when: item is regex("\A[6,7].*")
+      changed_when: false
 
+    - name: run fixes for 6.5
+      include_role:
+        name: "{{role}}"
+      with_items: "{{ fixes_65 }}"
+      when: vcenter_version is regex("6\.5")
+      loop_control:
+        loop_var: role
+    
     - name: run fixes for 6.7
       include_role:
         name: "{{role}}"
-      with_items: "{{ fixes-6.5 }}"
+      with_items: "{{ fixes_67 }}"
       when: vcenter_version is regex("6\.7")
+      loop_control:
+        loop_var: role
+    
+    - name: run fixes for 7.0/7.0u1
+      include_role:
+        name: "{{role}}"
+      with_items: "{{ fixes_70 }}"
+      when: vcenter_version is version('7.0.0','==') or vcenter_version is version('7.0.1','==')
+      loop_control:
+        loop_var: role
+
+    - name: run fixes for 7.0u2+
+      include_role:
+        name: "{{role}}"
+      with_items: "{{ fixes_70u2 }}"
+      when: vcenter_version is version('7.0.2','>=')
+      loop_control:
+        loop_var: role

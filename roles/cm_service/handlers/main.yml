@@ -1,0 +1,5 @@
+- name: restart_cm_service
+  shell:
+    cmd: service-control --restart vmware-cm
+
+    
