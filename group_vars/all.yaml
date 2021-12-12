@@ -1,10 +1,23 @@
 ---
 ansible_ssh_user: root
 
-fixes-6.5:
-  - vmon-6.5
+fixes_65:
   - cm_service
+  - vmon_65
 
-fixes-6.7:
-  - vmon-6.5
+fixes_67:
   - cm_service
+  - vmon_65
+  - analytics
+
+fixes_70:
+  - dbcc
+  - analytics
+  - vmon_65
+  - vum
+
+fixes_70u2:
+  - dbcc
+  - analytics
+  - vum
+  - vmon_70u2

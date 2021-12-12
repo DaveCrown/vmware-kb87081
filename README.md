@@ -1,11 +1,20 @@
-# vmware-kb82374 Workaround for CVE-2021-21972 and CVE-2021-21973
+# vmware-kb87081 Workaround for VMSA-2021-0028 CVE-2021-44228
 ## Description
-Sets the vRops HTML5 vCenter plugin to incomptatable as a work around per the KB. If you want the knowledge base articles, see the [Reference Section](#Reference) 
+A play that runs through the various fixes as outlined in VMware KB87081 to workaround the apache log4j RCE[Reference Section](#Reference) 
 ### The Play's workflow 
 1. SSH's in to the VC and sets the vrops plugin to incompatible. 
-2. Restarts the vsphere-ui service if a change was made
-3. Make your life easier and you look a rock star.  
+2. Gets the version of vcenter via vpxd -v
+1. For each vulnerable service
+    1. checks to see if the mitigatation is needed
+    1. checks to make sure there is no backup of the file
+        1. if there is no back up, backs it up
+        1. else the play will error out
+    1. changes either the jar wor wrapper file
+    1. restarts the effect services
+    1. retests for the mitigation
+1. Make your life easier and you look a rock star.  
  
+The logic behind erroring out when the fix is needed and the backup file for the jar or wrapper exists is the file is not in a known good state and I didn't want to overwrite a known good backup. 
 > ### ***<span style="color:red">Warning!</span>***
 >- Mucking config files can break your environment. Have backups and snapshots before begin.
 >- You're running code downloaded from the Internet, read the code first to get that warm and fuzzy feeling. 
@@ -18,11 +27,10 @@ Sets the vRops HTML5 vCenter plugin to incomptatable as a work around per the KB
 - **Backups and Snapshots**
 - A supported UNIX type OS (Linux, MacOS, etc)
 - Ansible (developed against 2.9)
-- pyVmomi python library 6.7 or later
-- vCenter 6.5 VCSA or later
+- vCenter 6.5 VCSA or later (developed against 6.7u3p and 7.0u2)
 - git
 - a text editor of your choice
-- the `root` os passwords for all the vcsa's you want to use this with
+- the `root` os passwords for all the vcsa's you want to run this against
 ### To use the Vagrant file
 - Vagrant
 - One of following Virtualization Technologies:
@@ -34,7 +42,7 @@ Sets the vRops HTML5 vCenter plugin to incomptatable as a work around per the KB
 
 ## Installation
 ### git clone
-Start with cloning this to your local workstation with `git clone https://github.com/DaveCrown/vmware-kb82374.git` and `cd vmware-kb82374`
+Start with cloning this to your local workstation with `git clone https://github.com/DaveCrown/vmware-kb87081.git` and `cd vmware-kb87081`
 
 ### Unix
 Use your favorite package manager. See the [Ansible Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/index.html). You will also need the pyVmomi Python library. For some reason, the package is not a dependency for Ansible.
@@ -95,7 +103,7 @@ Just a simple `ansible-playbook -k apply_kb.yml` is all you need. The flag `-k` 
 Call `ansible-playbook apply_kb.yml` without the `-k`.
 
 ### Validating the change
-Since this is barest of bones play. Please validate the play with the steps outlined [vmware kb 82374](https://kb.vmware.com/s/article/82374).
+Since this is barest of bones play. Please validate the play with the steps outlined [vmware kb 87081](https://kb.vmware.com/s/article/87081).
 
 ### Options
 #### CLI 
@@ -112,13 +120,14 @@ Since this is barest of bones play. Please validate the play with the steps outl
 To use the play in Tower, this play just needs a standard machine credential. The vcenters.ini file is your inventory file for the project.
 
 ## Reference
-[vmware kb 82374](https://kb.vmware.com/s/article/82374)  
+[VMSA-2021-0028](https://www.vmware.com/security/advisories/VMSA-2021-0028.html)  
+[vmware kb 87081](https://kb.vmware.com/s/article/87081)  
 [vmware kb 76719](https://kb.vmware.com/s/article/76719)  
 [vmware kb 2107727](https://kb.vmware.com/s/article/2107727)  
 [Ansible Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/index.html)  
 [Vagrant Install Guide](https://www.vagrantup.com/intro/getting-started/install.html)  
 
 ## Legal
-I am in no away affiliated with VMware, nor did I write the fix. I just wrote an ansible play to apply it at scale. Use this as your own peril with good backups and snapshots. Don't blame me if this burns down your vcenter environment, you were warned. I take no responsibility or liability.
+I am in no away affiliated with VMware, nor did I write the fix. I just wrote an ansible play to apply it at scale. Use this as your own peril with good backups and snapshots. Don't blame me if this burns down your vcenter environment, summons cthulhu, burns your toasts, or some other awful thing; you were warned. I take no responsibility or liability.
 
 Trademarks and Copyrights are properties of their respective owners.

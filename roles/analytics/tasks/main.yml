@@ -1,27 +1,27 @@
 ---
 
-- name: get cm_service strate
+- name: get analytics_service state
   shell: "grep -i jndilookup {{ jar_file }} | wc -l"
-  register: cm_output
+  register: analytics_output
   changed_when: false
 
 - name: set check_varible
   set_fact:
-    cm_service_vulnerable: "{{ cm_output.stdout | int }}"
+    analytics_service_vulnerable: "{{ analytics_output.stdout | int }}"
   changed_when: false
 
 - name: check for backup file
   stat:
     path: "{{ jar_file }}.bak"
-  register: cm_backup_stat
+  register: analytics_backup_stat
   changed_when: false
 
 - name: chuck a rod if already ran
   assert:
-    that: cm_backup_stat.stat.exists == false
+    that: analytics_backup_stat.stat.exists == false
     fail_msg: "Backup exists, and the jar file is vulnerable"
     success_msg: "No previous backup"
-  when: (cm_output.stdout | int) !=  0
+  when: (analytics_output.stdout | int) !=  0
 
 - name: backup jar file
   copy:
@@ -29,26 +29,27 @@
     dest: "{{ jar_file }}.bak"
     remote_src: yes
   when:
-    - cm_service_vulnerable !=0
-    - cm_backup_stat.stat.exists == false
+    - analytics_service_vulnerable !=0
+    - analytics_backup_stat.stat.exists == false
 
 - name: Apply Fix
   command: zip -q -d {{ jar_file }} org/apache/logging/log4j/core/lookup/JndiLookup.class
-  when: (cm_output.stdout | int) !=  0
-  notify: restart_cm_service
+  when: (analytics_output.stdout | int) !=  0
+  notify: 
+    - restart_analytics_service
 
 - name: kick the services over
   meta: flush_handlers
 
-- name: get cm_service strate
-  shell: "grep -i jndilookup {{ jar_file }} | wc -l"
-  register: cm_output
+- name: get analytics_service state
+  shell: "grep -i jndilookup {{ jar_file }}  | wc -l"
+  register: analytics_output
   changed_when: false
-  when:  cm_service_vulnerable !=0
+  when:  analytics_service_vulnerable !=0
 
 - name: validate its fixed
   assert:
-    that: (cm_output.stdout | int) ==  0
+    that: (analytics_output.stdout | int) ==  0
     fail_msg: "fix did not work"
     success_msg: "Fix applied successfully"
-  when:  cm_service_vulnerable !=0
+  when:  analytics_service_vulnerable !=0

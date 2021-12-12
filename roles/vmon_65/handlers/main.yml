@@ -1,0 +1,8 @@
+- name: stop_services
+  shell:
+    cmd: service-control --stop --all
+
+- name: start_services
+  shell:
+    cmd: service-control --start --all
+    
