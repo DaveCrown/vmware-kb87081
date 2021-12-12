@@ -1,0 +1,7 @@
+- name: restart_analytics_service
+  shell:
+    cmd: service-control --restart vmware-analytics
+
+- name: wait 30 seconds
+  wait_for:
+    delay: 30
