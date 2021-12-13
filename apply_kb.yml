@@ -18,6 +18,14 @@
       when: item is regex("\A[6,7].*")
       changed_when: false
 
+    - name: run fixes for 6.0
+      include_role:
+        name: "{{role}}"
+      with_items: "{{ fixes_60 }}"
+      when: vcenter_version is regex("6\.0")
+      loop_control:
+        loop_var: role
+
     - name: run fixes for 6.5
       include_role:
         name: "{{role}}"

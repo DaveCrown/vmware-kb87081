@@ -1,0 +1,11 @@
+---
+---
+- name: stop_perf-chart_service
+  shell:
+    cmd: service-control --stop vmware-perfcharts
+
+- name: start_perf-chart_service
+  shell:
+    cmd: service-control --start vmware-perfcharts
+
+    

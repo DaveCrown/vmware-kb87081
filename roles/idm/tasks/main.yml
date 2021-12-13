@@ -1,0 +1,23 @@
+---
+- name: check for backup file
+  stat:
+    path: "{{ base_file }}.bak"
+  register: sts_backup_stat
+  changed_when: false
+
+- name: backup wrapper file
+  copy:
+    src: "{{ base_file }}"
+    dest: "{{ base_file }}.bak"
+    remote_src: yes
+  when: sts_backup_stat.stat.exists == false
+
+- name: update launch parameters for jvm
+  lineinfile:
+    path: "{{ base_file }}"
+    insertbefore: '\$DEBUG_OPTS \\'
+    line: -Dlog4j2.formatMsgNoLookups=true \
+    backup: yes
+  notify:
+    - stop_idm_service
+    - start_idm_service

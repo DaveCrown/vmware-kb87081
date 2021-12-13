@@ -1,0 +1,29 @@
+---
+- name: check for backup file
+  stat:
+    path: "{{ base_file }}.bak"
+  register: perf-chat_backup_stat
+  changed_when: false
+
+- name: backup wrapper file
+  copy:
+    src: "{{ base_file }}"
+    dest: "{{ base_file }}.bak"
+    remote_src: yes
+  when: perf-chat_backup_stat.stat.exists == false
+
+- name: update launch parameters for jvm
+  lineinfile:
+    path: "{{ base_file }}"
+    insertafter: '-Dauditlog.dir=/var/log/audit/sso-events  \\'
+    line: -Dlog4j2.formatMsgNoLookups=true \ 
+    backup: yes
+  notify:
+    - stop_perf-charts_service
+    - start_perf-charts_service
+
+- name: remove vulnerable jars
+  file:
+    path: "{{ rm_file }}"
+    state: absent
+  with_items: "{{ rm_files }}"

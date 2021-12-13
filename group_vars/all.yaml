@@ -1,11 +1,19 @@
 ---
 ansible_ssh_user: root
 
+fixes_60:
+  - perf-chart
+
 fixes_65:
   - cm_service
+  - sts
+  - idm
+  - pscc
   - vmon_65
 
 fixes_67:
+  - sts
+  - idm
   - cm_service
   - analytics
   - vmon_65
