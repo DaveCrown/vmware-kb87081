@@ -46,5 +46,4 @@
   assert:
     that: vum_output.stdout is search ('log4j2.formatMsgNoLookups = true')
     fail_msg: "fix did not work"
-    success_msg: "Fix applied successfully"
   when: not vum_service_fixed

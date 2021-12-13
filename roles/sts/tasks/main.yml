@@ -16,7 +16,7 @@
   lineinfile:
     path: "{{ base_file }}"
     insertbefore: '\$DAEMON_CLASS start'
-    line: -Dlog4j2.formatMsgNoLookups=true
+    line: -Dlog4j2.formatMsgNoLookups=true \
     backup: yes
   notify:
     - stop_sts_service

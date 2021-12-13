@@ -16,30 +16,18 @@
   register: analytics_backup_stat
   changed_when: false
 
-- name: chuck a rod if already ran
-  assert:
-    that: analytics_backup_stat.stat.exists == false
-    fail_msg: "Backup exists, and the jar file is vulnerable"
-    success_msg: "No previous backup"
-  when: (analytics_output.stdout | int) !=  0
-
 - name: backup jar file
   copy:
     src: "{{ jar_file }}"
     dest: "{{ jar_file }}.bak"
     remote_src: yes
-  when:
-    - analytics_service_vulnerable !=0
-    - analytics_backup_stat.stat.exists == false
+  when: analytics_backup_stat.stat.exists == false
 
 - name: Apply Fix
   command: zip -q -d {{ jar_file }} org/apache/logging/log4j/core/lookup/JndiLookup.class
   when: (analytics_output.stdout | int) !=  0
   notify: 
     - restart_analytics_service
-
-- name: kick the services over
-  meta: flush_handlers
 
 - name: get analytics_service state
   shell: "grep -i jndilookup {{ jar_file }}  | wc -l"
@@ -51,5 +39,4 @@
   assert:
     that: (analytics_output.stdout | int) ==  0
     fail_msg: "fix did not work"
-    success_msg: "Fix applied successfully"
   when:  analytics_service_vulnerable !=0

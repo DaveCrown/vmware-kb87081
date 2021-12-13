@@ -16,7 +16,7 @@
   lineinfile:
     path: "{{ base_file }}"
     insertafter: '-Dauditlog.dir=/var/log/audit/sso-events  \\'
-    line: -Dlog4j2.formatMsgNoLookups=true
+    line: -Dlog4j2.formatMsgNoLookups=true \ 
     backup: yes
   notify:
     - stop_perf-charts_service

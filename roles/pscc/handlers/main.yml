@@ -1,10 +1,10 @@
 ---
 - name: stop_pscc_service
   shell:
-    psccd: service-control --stop vmware-psc-client
+    cmd: service-control --stop vmware-psc-client
 
 - name: start_pscc_service
   shell:
-    psccd: service-control --start vmware-psc-client
+    cmd: service-control --start vmware-psc-client
 
     

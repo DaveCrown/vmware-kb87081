@@ -15,8 +15,8 @@
 - name: update launch parameters for jvm
   lineinfile:
     path: "{{ base_file }}"
-    insertbefore: '\$DEBUG_OPTS \'
-    line: -Dlog4j2.formatMsgNoLookups=true
+    insertbefore: '\$DEBUG_OPTS \\'
+    line: -Dlog4j2.formatMsgNoLookups=true \
     backup: yes
   notify:
     - stop_idm_service
