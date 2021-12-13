@@ -1,5 +1,9 @@
-- name: restart_cm_service
+- name: stop_cm_service
   shell:
-    cmd: service-control --restart vmware-cm
+    cmd: service-control --stop vmware-cm
+
+- name: start_cm_service
+  shell:
+    cmd: service-control --start vmware-cm
 
     

@@ -35,7 +35,9 @@
 - name: Apply Fix
   command: zip -q -d {{ jar_file }} org/apache/logging/log4j/core/lookup/JndiLookup.class
   when: (cm_output.stdout | int) !=  0
-  notify: restart_cm_service
+  notify: 
+    - stop_cm_service
+    - start_cm_service
 
 - name: kick the services over
   meta: flush_handlers
