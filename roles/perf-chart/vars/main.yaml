@@ -1,0 +1,8 @@
+---
+base_file: /usr/lib/vmware-perfcharts/wrapper/conf/wrapper.conf 
+
+rm_files: 
+  - /opt/pivotal/pivotal-tc-server-standard/templates/gemfire-p2p/lib/log4j-core-2.1.jar
+  - /opt/pivotal/pivotal-tc-server-standard/templates/gemfire-p2p/lib/log4j-api-2.1.jar
+  - /opt/pivotal/pivotal-tc-server-standard/templates/gemfire-cs/lib/log4j-core-2.1.jar
+  - /opt/pivotal/pivotal-tc-server-standard/templates/gemfire-cs/lib/log4j-api-2.1.jar

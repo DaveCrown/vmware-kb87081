@@ -1,0 +1,10 @@
+---
+- name: stop_sts_service
+  shell:
+    stsd: service-control --stop vmware-stsd
+
+- name: start_sts_service
+  shell:
+    stsd: service-control --start vmware-stsd
+
+    

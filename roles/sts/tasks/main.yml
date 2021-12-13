@@ -1,0 +1,61 @@
+---
+- name: get sts_service state
+  shell: "ps aux | grep formatMsgNoLookups"
+  register: sts_output
+  changed_when: false
+
+- name: set check_varible
+  set_fact:
+    sts_service_fixed: "{{  sts_output.stdout is search ('-Dlog4j2.formatMsgNoLookups=true') }}"
+  #when:  sts_output.stdout is search ("-Dlog4j2.formatMsgNoLookups=true")
+  changed_when: false
+  
+- name: check for backup file
+  stat:
+    path: "{{ base_file }}.bak"
+  register: sts_backup_stat
+  changed_when: false
+
+- name: chuck a rod if already ran
+  assert:
+    that: sts_backup_stat.stat.exists == false
+    fail_msg: "Backup exists, and the wrapper file is vulnerable"
+    success_msg: "No previous backup"
+  when: not sts_service_fixed
+
+- name: backup wrapper file
+  copy:
+    src: "{{ base_file }}"
+    dest: "{{ base_file }}.bak"
+    remote_src: yes
+  when:
+    - not sts_service_fixed
+    - sts_backup_stat.stat.exists == false
+  
+- name: update launch parameters for jvm
+  lineinfile:
+    path: "{{ base_file }}"
+    insertbefore: '\$DAEMON_CLASS start'
+    line: -Dlog4j2.formatMsgNoLookups=true
+  notify:
+    - stop_sts_service
+    - start_sts_service
+  when:
+    - not sts_service_fixed
+    - sts_backup_stat.stat.exists == false
+
+- name: kick the services over
+  meta: flush_handlers
+
+- name: get sts_service state
+  shell: "ps aux | grep formatMsgNoLookups"
+  register: sts_output
+  changed_when: false
+  when: not sts_service_fixed
+
+- name: validate its fixed
+  assert:
+    that: sts_output.stdout is search ('-Dlog4j2.formatMsgNoLookups=true') 
+    fail_msg: "fix did not work"
+    success_msg: "Fix applied successfully"
+  when: not sts_service_fixed

@@ -1,0 +1,10 @@
+---
+- name: stop_idm_service
+  shell:
+    idmd: service-control --stop vmware-idmd
+
+- name: start_idm_service
+  shell:
+    idmd: service-control --start vmware-idmd
+
+    

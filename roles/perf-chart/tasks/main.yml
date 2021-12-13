@@ -1,0 +1,15 @@
+---
+- name: update launch parameters for jvm
+  lineinfile:
+    path: "{{ base_file }}"
+    insertafter: '-Dauditlog.dir=/var/log/audit/sso-events  \\'
+    line: -Dlog4j2.formatMsgNoLookups=true
+  notify:
+    - stop_perf-charts_service
+    - start_perf-charts_service
+
+- name: remove vulnerable jars
+  file:
+    path: "{{ rm_file }}"
+    state: absent
+  with_items: "{{ rm_files }}"
