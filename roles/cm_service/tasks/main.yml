@@ -1,21 +1,22 @@
 ---
 
-- name: get cm_service strate
+- name: get cm_service srate
   shell: "grep -i jndilookup {{ jar_file }} | wc -l"
   register: cm_output
   changed_when: false
+  check_mode: false
 
 - name: set check_varible
   set_fact:
     cm_service_vulnerable: "{{ cm_output.stdout | int }}"
   changed_when: false
+  check_mode: false
 
 - name: check for backup file
   stat:
     path: "{{ jar_file }}.bak"
   register: cm_backup_stat
   changed_when: false
-
 - name: backup jar file
   copy:
     src: "{{ jar_file }}"
@@ -38,9 +39,11 @@
   register: cm_output
   changed_when: false
   when:  cm_service_vulnerable !=0
+  check_mode: false
 
 - name: validate its fixed
   assert:
     that: (cm_output.stdout | int) ==  0
     fail_msg: "fix did not work"
   when:  cm_service_vulnerable !=0
+  check_mode: false
