@@ -4,11 +4,13 @@
   shell: "grep -i jndilookup {{ jar_file }} | wc -l"
   register: analytics_output
   changed_when: false
+  check_mode: false
 
 - name: set check_varible
   set_fact:
     analytics_service_vulnerable: "{{ analytics_output.stdout | int }}"
   changed_when: false
+  check_mode: false
 
 - name: check for backup file
   stat:
@@ -34,9 +36,11 @@
   register: analytics_output
   changed_when: false
   when:  analytics_service_vulnerable !=0
+  check_mode: false
 
 - name: validate its fixed
   assert:
     that: (analytics_output.stdout | int) ==  0
     fail_msg: "fix did not work"
   when:  analytics_service_vulnerable !=0
+  check_mode: false
